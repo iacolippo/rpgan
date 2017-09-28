@@ -55,7 +55,7 @@ if nthr is None:
 else:
     sess = tf.Session(config=tf.ConfigProto(
         intra_op_parallelism_threads=int(nthr)))
-sess.run(tf.initialize_all_variables())
+sess.run(tf.global_variables_initializer())
 
 #########################################################################
 

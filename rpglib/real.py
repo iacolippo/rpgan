@@ -22,12 +22,12 @@ class Real:
                 in_s = tf.to_float(tf.shape(img)[:2])
                 min_s = tf.minimum(in_s[0],in_s[1])
                 new_s = tf.to_int32((float(imsz+1)/min_s)*in_s)
-                img = tf.image.resize_images(img,new_s[0],new_s[1])
+		img = tf.image.resize_images(img,new_s)
                 img = tf.random_crop(img,[imsz,imsz,3])
 
             batch.append(tf.expand_dims(img,0))
-            
-        batch = tf.to_float(tf.concat(0,batch))*(2.0/255.0) - 1.0
+
+        batch = tf.to_float(tf.concat(batch, 0))*(2.0/255.0) - 1.0
 
         # Fetching logic
         self.batch = tf.Variable(tf.zeros([bsz,imsz,imsz,3],dtype=tf.float32),trainable=False)
@@ -44,7 +44,7 @@ class Real:
 
             fd[self.names[i]] = self.files[idx]
         return fd
-        
+
     def __init__(self,lfile,bsz,imsz,niter,crop=False):
 
         # Setup fetch graph
@@ -55,11 +55,11 @@ class Real:
         for line in open(lfile).readlines():
             self.files.append(line.strip())
         self.ndata = len(self.files)
-        
+
         # Setup shuffling
         self.niter = niter*bsz
         self.rand = np.random.RandomState(0)
         idx = self.rand.permutation(self.ndata)
         for i in range(niter // self.ndata):
-            idx = self.rand.permutation(ndata)
+            idx = self.rand.permutation(self.ndata)
         self.idx = np.int32(idx)
